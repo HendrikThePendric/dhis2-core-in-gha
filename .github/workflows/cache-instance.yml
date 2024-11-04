@@ -10,6 +10,8 @@ jobs:
         steps:
             - name: Checkout current repo
               uses: actions/checkout@v4
+              with:
+                path: current-repo
             - name: Check out docker files from DHIS2 Core repo
               uses: actions/checkout@v4
               with:

@@ -43,7 +43,19 @@ jobs:
                 USERNAME: admin
                 PASSWORD: district
                 APPS_TO_INSTALL: 'Line Listing'
-            - name: Create cache artefacts dir
-              run: mkdir artefacts
-            - name: Check file system
-              run: ls -l
+            - name: Create the cache artifact
+              run: |
+                mkdir -p artifacts/volumes
+                docker stop dhis2-core-in-gha-web-1
+                docker stop dhis2-core-in-gha-db-1
+                docker export dhis2-core-in-gha-web-1 > ./artifacts/web.tar
+                docker export dhis2-core-in-gha-db-1 > ./artifacts/db.tar
+                tar -zcvf ./artifacts/volumes.tar.gz /var/lib/docker/volumes
+            - name: List artifacts files
+              run: ls -lh
+            - name: Save artifacts to cache
+              uses: actions/cache/save@v4
+              id: cache
+              with:
+                path: ./artifacts
+                key: v41-artifacts

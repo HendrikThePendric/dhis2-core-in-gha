@@ -19,20 +19,24 @@ jobs:
                     .dockerignore
                     docker/*
                 sparse-checkout-cone-mode: false
-            - name: Spin up the stack
-              run: docker compose up -d
-              env:
-                DHIS2_IMAGE: dhis2/core:2.41
-                DHIS2_DB_DUMP_URL: https://databases.dhis2.org/sierra-leone/2.38/dhis2-db-sierra-leone.sql.gz
-            - name: Install Line Listing App and Generate Analytics Tables
-              run: |
-                chmod +x .scripts/install_apps_from_app_hub.sh
-                .scripts/install_apps_from_app_hub.sh
-                chmod +x ./scripts/generate-analytics-tables.sh
-                ./scripts/generate-analytics-tables.sh
-              shell: bash
-              env:
-                BASE_URL: http://web:8080
-                USERNAME: admin
-                PASSWORD: district
-                APPS_TO_INSTALL: 'Line Listing'
+            - name: Check file system
+              run: ls -l
+            # - name: Spin up the stack
+            #   run: docker compose up -d
+            #   env:
+            #     DHIS2_IMAGE: dhis2/core:2.41
+            #     DHIS2_DB_DUMP_URL: https://databases.dhis2.org/sierra-leone/2.38/dhis2-db-sierra-leone.sql.gz
+            # - name: Install Line Listing App and Generate Analytics Tables
+            #   run: |
+            #     chmod +x .scripts/install_apps_from_app_hub.sh
+            #     .scripts/install_apps_from_app_hub.sh
+            #     chmod +x ./scripts/generate-analytics-tables.sh
+            #     ./scripts/generate-analytics-tables.sh
+            #   shell: bash
+            #   env:
+            #     BASE_URL: http://web:8080
+            #     USERNAME: admin
+            #     PASSWORD: district
+            #     APPS_TO_INSTALL: 'Line Listing'
+            # - name: Create cache artefacts dir
+            #   run: mkdir artefacts

@@ -20,7 +20,7 @@ jobs:
                     docker/*
                 sparse-checkout-cone-mode: false
             - name: Spin up the stack
-              run: docker compose up
+              run: docker compose up -d
               env:
                 DHIS2_IMAGE: dhis2/core:2.41
                 DHIS2_DB_DUMP_URL: https://databases.dhis2.org/sierra-leone/2.38/dhis2-db-sierra-leone.sql.gz

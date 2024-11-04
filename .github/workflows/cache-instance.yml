@@ -50,12 +50,12 @@ jobs:
                 docker stop dhis2-core-in-gha-db-1
                 docker export dhis2-core-in-gha-web-1 > ./artifacts/web.tar
                 docker export dhis2-core-in-gha-db-1 > ./artifacts/db.tar
-                tar -zcvf ./artifacts/volumes.tar.gz /var/lib/docker/volumes
             - name: List artifacts files
               run: ls -lh
             - name: Save artifacts to cache
               uses: actions/cache/save@v4
               id: cache
+              # tar -zcvf ./artifacts/volumes.tar.gz /var/lib/docker/volumes
               with:
                 path: ./artifacts
                 key: v41-artifacts

@@ -30,8 +30,6 @@ jobs:
               run: |
                 chmod +x ./current-repo/scripts/install_apps_from_app_hub.sh
                 ./current-repo/scripts/install_apps_from_app_hub.sh
-                chmod +x ./current-repo/scripts/generate-analytics-tables.sh
-                ./current-repo/scripts/generate-analytics-tables.sh
               shell: bash
               env:
                 BASE_URL: http://localhost:8080

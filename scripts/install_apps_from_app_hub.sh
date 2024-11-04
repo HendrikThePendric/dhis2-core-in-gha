@@ -15,9 +15,11 @@ function install_app() {
     local CREDENTIALS="$USERNAME:$PASSWORD"
     local APP_NAME=$1
     local APP_ID=$(curl -fsSL --user $CREDENTIALS $BASE_URL/api/appHub | jq -r --arg name "${APP_NAME}" '.[] | select(.name==$name) | .id')
+    echo "APP_ID = $APP_ID"
     local DHIS2_VERSION=$(curl -fsSL --user $CREDENTIALS $BASE_URL/api/system/info | jq -r '.version' | cut -d '.' -f 1,2)
+    echo "DHIS2_VERSION = $DHIS2_VERSION"
     local LATEST_APP_VERSION_ID=$(curl -fsSL --user $CREDENTIALS $BASE_URL/api/appHub/v2/apps/$APP_ID/versions?minDhisVersion=lte:$DHIS2_VERSION | jq -r '.result[0].id // empty')
-
+    echo "LATEST_APP_VERSION_ID = $LATEST_APP_VERSION_ID"
     if [[ -n "\$LATEST_APP_VERSION_ID" ]]; then
         curl -fsSL --user $CREDENTIALS -X POST $BASE_URL/api/appHub/$LATEST_APP_VERSION_ID
         echo "Installed $APP_NAME with ID $APP_ID"

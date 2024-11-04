@@ -1,0 +1,38 @@
+name: Create a DHIS2 Core instance and cache it
+
+on:
+    workflow_dispatch:
+
+jobs:
+    cache-instance:
+        name: Spin up a DHIS2 Core Docker Stack and cache it
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout current repo
+              uses: actions/checkout@v4
+            - name: Check out docker files from DHIS2 Core repo
+              uses: actions/checkout@v4
+              with:
+                repository: dhis2/dhis2-core
+                sparse-checkout: |
+                    docker-compose.yml
+                    .dockerignore
+                    docker/*
+                sparse-checkout-cone-mode: false
+            - name: Spin up the stack
+              run: docker compose up
+              env:
+                DHIS2_IMAGE: dhis2/core:2.41
+                DHIS2_DB_DUMP_URL: https://databases.dhis2.org/sierra-leone/2.38/dhis2-db-sierra-leone.sql.gz
+            - name: Install Line Listing App and Generate Analytics Tables
+              run: |
+                chmod +x .scripts/install_apps_from_app_hub.sh
+                .scripts/install_apps_from_app_hub.sh
+                chmod +x ./scripts/generate-analytics-tables.sh
+                ./scripts/generate-analytics-tables.sh
+              shell: bash
+              env:
+                BASE_URL: http://web:8080
+                USERNAME: admin
+                PASSWORD: district
+                APPS_TO_INSTALL: 'Line Listing'

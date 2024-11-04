@@ -8,10 +8,6 @@ jobs:
         name: Spin up a DHIS2 Core Docker Stack and cache it
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout current repo
-              uses: actions/checkout@v4
-              with:
-                path: current-repo
             - name: Check out docker files from DHIS2 Core repo
               uses: actions/checkout@v4
               with:
@@ -21,6 +17,10 @@ jobs:
                     .dockerignore
                     docker/*
                 sparse-checkout-cone-mode: false
+            - name: Checkout current repo
+              uses: actions/checkout@v4
+              with:
+                  path: current-repo
             - name: Check file system
               run: ls -l
             # - name: Spin up the stack

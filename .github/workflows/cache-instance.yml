@@ -22,7 +22,12 @@ jobs:
               with:
                   path: current-repo
             - name: Spin up the stack
-              run: docker compose up -d
+              run: |
+                docker compose up -d
+                sleep 5s
+                curl --head -X GET --retry-max-time 300 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080
+                docker ps
+                docker compose logs web
               env:
                 DHIS2_IMAGE: dhis2/core:2.41
                 DHIS2_DB_DUMP_URL: https://databases.dhis2.org/sierra-leone/2.38/dhis2-db-sierra-leone.sql.gz
@@ -32,7 +37,7 @@ jobs:
                 ./current-repo/scripts/install_apps_from_app_hub.sh
               shell: bash
               env:
-                BASE_URL: http://localhost:8080
+                BASE_URL: http://127.0.0.1:8080
                 USERNAME: admin
                 PASSWORD: district
                 APPS_TO_INSTALL: 'Line Listing'

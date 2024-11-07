@@ -22,7 +22,7 @@ jobs:
           echo "WAIT"
           sleep 40s
           echo "POLLING"
-          curl --head -X GET --retry-max-time 180 --retry-connrefused --retry-all-errors --retry-delay 1 http://127.0.0.1:8080
+          curl --head -X GET --retry-max-time 180 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080
           echo "LISTING"
           docker ps
           echo "LOGGING"

@@ -1,54 +1,56 @@
 name: Create a DHIS2 Core instance and cache it
 
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-    cache-instance:
-        name: Spin up a DHIS2 Core Docker Stack and cache it
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout current repo
-              uses: actions/checkout@v4
-            - name: Create required directories
-              run: |
-                mkdir -p data/web
-                mkdir -p data/db
-                mkdir -p artifacts/volumes
-            - name: Spin up the stack
-              run: |
-                docker compose up -d
-                sleep 5s
-                curl --head -X GET --retry-max-time 300 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080
-                docker ps
-                docker compose logs web
-              env:
-                DHIS2_IMAGE: dhis2/core:2.41
-                DHIS2_DB_DUMP_URL: https://databases.dhis2.org/sierra-leone/2.38/dhis2-db-sierra-leone.sql.gz
-            - name: Install Line Listing App and Generate Analytics Tables
-              run: |
-                chmod +x ./scripts/install-apps-from-app-hub.sh
-                chmod +x ./scripts/generate-analytics-tables.sh
-                ./scripts/install-apps-from-app-hub.sh
-                ./scripts/generate-analytics-tables.sh
-              shell: bash
-              env:
-                BASE_URL: http://127.0.0.1:8080
-                USERNAME: admin
-                PASSWORD: district
-                APPS_TO_INSTALL: 'Line Listing'
-            - name: Create the cache artifact
-              run: |
-                docker stop dhis2-core-in-gha-web-1
-                docker stop dhis2-core-in-gha-db-1
-                docker export dhis2-core-in-gha-web-1 > ./artifacts/web.tar
-                docker export dhis2-core-in-gha-db-1 > ./artifacts/db.tar
-                tar -zcvf ./artifacts/data.tar.gz ./data
-            - name: List artifacts files
-              run: ls -lh artifacts
-            - name: Save artifacts to cache
-              uses: actions/cache/save@v4
-              id: cache
-              with:
-                path: ./artifacts
-                key: v41-artifacts
+  cache-instance:
+    name: Spin up a DHIS2 Core Docker Stack and cache it
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+      - name: Create required files and directories
+        run: |
+          mkdir -p data/web
+          mkdir -p data/db
+          mkdir -p artifacts/volumes
+          cp ./docker/* ./data/web/
+      - name: Spin up the stack
+        run: |
+          docker compose up -d
+          sleep 5s
+          curl --head -X GET --retry-max-time 300 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080
+          docker ps
+          docker compose logs web
+        env:
+          DHIS2_IMAGE: dhis2/core:2.41
+          DHIS2_DB_DUMP_URL: https://databases.dhis2.org/sierra-leone/2.38/dhis2-db-sierra-leone.sql.gz
+      - name: Install Line Listing App and Generate Analytics Tables
+        run: |
+          chmod +x ./scripts/install-apps-from-app-hub.sh
+          chmod +x ./scripts/generate-analytics-tables.sh
+          ./scripts/install-apps-from-app-hub.sh
+          ./scripts/generate-analytics-tables.sh
+        shell: bash
+        env:
+          BASE_URL: http://127.0.0.1:8080
+          USERNAME: admin
+          PASSWORD: district
+          APPS_TO_INSTALL: "Line Listing"
+      - name: Create the cache artifact
+        run: |
+          docker stop dhis2-core-in-gha-web-1
+          docker stop dhis2-core-in-gha-db-1
+          docker export dhis2-core-in-gha-web-1 > ./artifacts/web.tar
+          docker export dhis2-core-in-gha-db-1 > ./artifacts/db.tar
+          tar -zcvf ./artifacts/data.tar.gz ./data
+      - name: List artifacts files
+        run: ls -lh artifacts
+      - name: Save artifacts to cache
+        uses: actions/cache/save@v4
+        id: cache
+        with:
+          path: ./artifacts
+          key: v41-artifacts
+

@@ -10,6 +10,11 @@ jobs:
         steps:
             - name: Checkout current repo
               uses: actions/checkout@v4
+            - name: Create required directories
+              run: |
+                mkdir -p data/web
+                mkdir -p data/db
+                mkdir -p artifacts/volumes
             - name: Spin up the stack
               run: |
                 docker compose up -d
@@ -32,13 +37,13 @@ jobs:
                 USERNAME: admin
                 PASSWORD: district
                 APPS_TO_INSTALL: 'Line Listing'
-            - name: Export the web and db container
+            - name: Create the cache artifact
               run: |
-                mkdir -p artifacts
                 docker stop dhis2-core-in-gha-web-1
                 docker stop dhis2-core-in-gha-db-1
                 docker export dhis2-core-in-gha-web-1 > ./artifacts/web.tar
                 docker export dhis2-core-in-gha-db-1 > ./artifacts/db.tar
+                tar -zcvf ./artifacts/data.tar.gz ./data
             - name: List artifacts files
               run: ls -lh artifacts
             - name: Save artifacts to cache

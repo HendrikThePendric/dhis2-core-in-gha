@@ -20,8 +20,11 @@ jobs:
         run: |
           docker compose up -d
           sleep 5s
-          curl --head -X GET --retry-max-time 300 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080
+          echo "POLLING"
+          curl --head -X GET --retry-max-time 600 --retry-connrefused --retry-delay 2 http://127.0.0.1:8080
+          echo "LISTING"
           docker ps
+          echo "LOGGING"
           docker compose logs web
         env:
           DHIS2_IMAGE: dhis2/core:2.41

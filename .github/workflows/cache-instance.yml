@@ -19,6 +19,7 @@ jobs:
       - name: Spin up the stack
         run: |
           docker compose up -d
+          sleep 20s
           echo "POLLING"
           curl --head -X GET --retry-max-time 180 --retry-all-errors --retry-delay 1 http://127.0.0.1:8080
           echo "LISTING"

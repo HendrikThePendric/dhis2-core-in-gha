@@ -20,9 +20,9 @@ jobs:
         run: |
           docker compose up -d
           echo "WAIT"
-          sleep 40s
+          sleep 10s
           echo "POLLING"
-          curl --head -X GET --retry-max-time 180 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080
+          curl --head -X GET --retry 50 --retry-max-time 180 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080
           echo "LISTING"
           docker ps
           echo "LOGGING"
